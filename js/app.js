@@ -81,21 +81,36 @@ $(document).ready(function() {
     function (data) {
       if (data['applications'].length > 0) {
         data['applications'].forEach(function (app) {
+          var d = new Date(app['created_timestamp']);
           var newListItem = $('#existing-applications-list-header').clone();  
-          newListItem.find('.app-date').text(app['created_timestamp']);
+          newListItem.find('.app-date').text(d.toLocaleString());
           newListItem.find('.app-company-name').text(app['company_name']);
-          newListItem.find('.app-status').text(app['email']);
+          newListItem.find('.app-status').text(app['status']);
           newListItem.insertAfter('#existing-applications-list-header');
         });
         $('.existing-applications').show();
         $('.application').hide();
         $('.application-toggle').show();
+      } else if (data['applications'].length == 0) {
+        $('.existing-applications').hide();
+        $('.application').show();
       }
     }
   );
 
+  $.validator.methods.agree = function( value, element ) {
+    return this.optional( element ) || /^AGREE$/.test( value );
+  }
+
+
   /* Register validation handler */
   $("#startup-application").validate({
+    rules: {
+      "terms-agree": "agree"
+    },
+    messages: {
+      "terms-agree": "You must type AGREE in this field to agree to terms"
+    },
     submitHandler: function(form) {
       /* TODO move into success and failure cases */
       postApplication().done(
@@ -105,6 +120,7 @@ $(document).ready(function() {
           $('#application-id').text( "Application ID: " + data['application-id'] );
           document.body.scrollTop = document.documentElement.scrollTop = 0;
           $('.post-apply').show();
+          $('.existing-applications').hide();
         }
       ); 
     }
