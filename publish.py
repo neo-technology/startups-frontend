@@ -9,14 +9,53 @@ from flask import render_template
 
 fapp = flask.Flask('pub', template_folder='.')
 
+API_BASE_URL = {"dev": "https://q6kkptbenj.execute-api.us-east-1.amazonaws.com/dev/",
+                "prod": "https://qjbuk9bvp6.execute-api.us-east-1.amazonaws.com/prod/"}
+
+LANDING_PAGE = {"dev": 91469,
+                "prod": 87812}
+
+LICENSE_PAGE = {"dev": 91471,
+                "prod": 91164}
+
 '''
 Publish file to S3 and get version
 '''
-def publish_js():
+def publish_app_js(stage):
+  global API_BASE_URL
+
   # Create an S3 client
   s3 = boto3.client('s3')
-  file = open('js/app.js')
-  f = s3.put_object(Body=file, Bucket='cdn.neo4jlabs.com', Key='startups-v2/app.js', ACL='public-read')
+
+  with fapp.app_context():
+    tmpl_vars = {'API_BASE_URL': API_BASE_URL[stage]}
+    rendered_content = render_template('js/app.js', **tmpl_vars)
+  f = s3.put_object(Body=bytes(rendered_content), Bucket='cdn.neo4jlabs.com', Key='startups-v2/' + stage + '/app.js', ACL='public-read')
+  return f['VersionId']
+
+def get_latest_license(key):
+  # Create an S3 client
+  s3 = boto3.client('s3')
+  bucket = 'neo4j-startup-licenses'
+  f = s3.head_object(Bucket=bucket, Key=key)
+  return 'https://s3.amazonaws.com/%s/%s?versionId=%s' % (bucket, key, str(f['VersionId']))
+
+def get_latest_neo4j_inc_license():
+  return get_latest_license('neo4j-inc-startup-license.pdf')
+
+def get_latest_neo4j_ab_license():
+  return get_latest_license('neo4j-ab-startup-license.pdf')
+
+'''
+Publish file to S3 and get version
+'''
+def publish_view_license_js(stage):
+  # Create an S3 client
+  s3 = boto3.client('s3')
+  with fapp.app_context():
+    tmpl_vars = {'API_BASE_URL': API_BASE_URL[stage]}
+    rendered_content = render_template('js/view-license.js', **tmpl_vars)
+  f = s3.put_object(Body=bytes(rendered_content), Bucket='cdn.neo4jlabs.com', Key='startups-v2/' + stage + '/view-license.js', ACL='public-read')
   return f['VersionId']
 
 
@@ -65,19 +104,24 @@ def main(argv):
         stage = arg
   print 'Stage is "%s"' % (stage)
 
-  if stage == 'dev':
-    print "Stage 'prod' is only supported stage currently"
+  if stage <> 'dev' and stage <> 'prod':
+    print "Stages 'prod' + 'dev' are only supported stages currently"
     sys.exit()
 
   if 'PUBLISH_DOCS_USERNAME' in os.environ and 'PUBLISH_DOCS_PASSWORD' in os.environ:
     # publish new JS
-    versionId = publish_js()
+    appVersionId = publish_app_js(stage)
+    viewLicenseVersionId = publish_view_license_js(stage)
 
     # publish wordpress page, replacing version of JS with latest published
     with fapp.app_context():
-      tmpl_vars = {'js_version': versionId}
+      tmpl_vars = {'js_location': 'https://cdn.neo4jlabs.com/startups-v2/' + stage + '/app.js', 'js_version': appVersionId, 'neo4j_ab_license_url': get_latest_neo4j_ab_license(), 'neo4j_inc_license_url': get_latest_neo4j_inc_license()}
       rendered_content = render_template('html/index.html', **tmpl_vars)
-      pageContent = update_wordpress_page(87812, rendered_content)
+      pageContent = update_wordpress_page(LANDING_PAGE[stage], rendered_content)
+
+      tmpl_vars = {'js_location': 'https://cdn.neo4jlabs.com/startups-v2/' + stage + '/view-license.js', 'js_version': viewLicenseVersionId}
+      rendered_content = render_template('html/view-license.html', **tmpl_vars)
+      pageContent = update_wordpress_page(LICENSE_PAGE[stage], rendered_content)
   else:
     print "Environment varisbles for PUBLISH_DOCS_USERNAME and PUBLISH_DOCS_PASSWORD must be set"
     sys.exit()

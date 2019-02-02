@@ -1,11 +1,30 @@
 var country = null;
 var state = null;
+var continent = null;
+
+var API_BASE_URL = "{{API_BASE_URL}}";
+
+var truncateDateTime = function(dateTimeStr) {
+  if (typeof dateTimeStr == 'string') {
+    return dateTimeStr.substring(0,10); 
+  } else {
+    return dateTimeStr;
+  }
+}
 
 var geoOnSuccess = function(geoipResponse) {
   country = geoipResponse.country.names.en;
   if (geoipResponse.subdivisions.length > 0) {
     // state = geoipResponse.subdivisions[0].iso_code;
     state = geoipResponse.subdivisions[0].names.en;
+  }
+  continent = geoipResponse.continent.code;
+  if (continent == 'EU') {
+    $('#license-url').val(neo4j_ab_license_url);
+    $('#license-url-link').attr('href', neo4j_ab_license_url);
+  } else {
+    $('#license-url').val(neo4j_inc_license_url);
+    $('#license-url-link').attr('href', neo4j_inc_license_url);
   }
 }
 
@@ -40,7 +59,7 @@ var postApplication = function() {
   return $.ajax
   ({
     type: "POST",
-    url: "https://q6kkptbenj.execute-api.us-east-1.amazonaws.com/dev/apply",
+    url: API_BASE_URL + "apply",
     contentType: "application/json",
     dataType: 'json',
     async: true,
@@ -62,7 +81,7 @@ var getApplications = function() {
   return $.ajax
   ({
     type: "GET",
-    url: "https://q6kkptbenj.execute-api.us-east-1.amazonaws.com/dev/getApplications",
+    url: API_BASE_URL + 'getApplications',
     async: true,
     headers: {
        "Authorization": id_token
@@ -77,26 +96,6 @@ $(document).ready(function() {
   var id_token = Cookies.get("com.neo4j.accounts.idToken");
   var id_token_expired = true;
 
-  getApplications().done(
-    function (data) {
-      if (data['applications'].length > 0) {
-        data['applications'].forEach(function (app) {
-          var d = new Date(app['created_timestamp']);
-          var newListItem = $('#existing-applications-list-header').clone();  
-          newListItem.find('.app-date').text(d.toLocaleString());
-          newListItem.find('.app-company-name').text(app['company_name']);
-          newListItem.find('.app-status').text(app['status']);
-          newListItem.insertAfter('#existing-applications-list-header');
-        });
-        $('.existing-applications').show();
-        $('.application').hide();
-        $('.application-toggle').show();
-      } else if (data['applications'].length == 0) {
-        $('.existing-applications').hide();
-        $('.application').show();
-      }
-    }
-  );
 
   $.validator.methods.agree = function( value, element ) {
     return this.optional( element ) || /^AGREE$/.test( value );
@@ -134,6 +133,23 @@ $(document).ready(function() {
     }
   );
 
+  /* Register button to sign in*/
+  $('#application-signin').click( 
+    function() {
+      currentLocation = [location.protocol, '//', location.host, location.pathname].join('');
+      window.location = 'https://neo4j.com/accounts/login/?targetUrl=' + encodeURI(currentLocation + '?action=continue');
+      return false;
+    }
+  );
+
+  /* Register button to sign out*/
+  $('.application-signout').click( 
+    function() {
+      window.location = 'https://neo4j.com/accounts/logout/?targetUrl=' + encodeURI(window.location);
+      return false;
+    }
+  );
+
   $('#application-toggle-button').click( 
     function() {
       $('.application').show();
@@ -155,16 +171,50 @@ $(document).ready(function() {
 
   if (userInfo && id_token && !id_token_expired) {
     var qsmap = parseQueryString();
+
+    getApplications()
+      .fail( function (jqXHR, textStatus, errorThrown) {
+        alert("Failed retrieving existing apps. (" + jqXHR.statusText + "). Contact startups@neo4j.com if this persists.");
+      })
+      .done( function (data) {
+        if (data['applications'].length > 0) {
+          data['applications'].forEach(function (app) {
+            //var d = new Date(app['created_timestamp']);
+            var newListItem = $('#existing-applications-list-header').clone();  
+            //newListItem.find('.app-date').text(d.toLocaleString().split(",")[0]);
+            newListItem.find('.app-date').text(truncateDateTime(app['created_date']));
+            newListItem.find('.app-company-name').text(app['company_name']);
+            newListItem.find('.app-status').text(app['status']);
+            newListItem.find('.app-licenses').text('');
+            newListItem.find('.license-expires').text(truncateDateTime(app['expires_date']));
+            for (keyid in app['license_keys']) {
+              key = app['license_keys'][keyid];
+              newListItem.find('.app-licenses').append('<a target="_blank" href="view-license?date=' + key['license_date'] + '&feature=' + key['licensed_feature'] + '">' + key['licensed_feature'] + '</a> ');
+            }
+            newListItem.insertAfter('#existing-applications-list-header');
+          });
+          $('.pre-apply').hide();
+          $('.existing-applications').show();
+          $('.application').hide();
+          $('.application-toggle').show();
+        } else if (data['applications'].length == 0) {
+          $('.pre-apply').hide();
+          $('.existing-applications').hide();
+          $('.application').show();
+        }
+      }
+    );
+    $('#first-name').val( userInfo.given_name );
+    $('#last-name').val( userInfo.family_name );
+    $('#email').val( userInfo.email );
     if ('action' in qsmap && qsmap['action'][0] == 'continue') {
-      $('#first-name').val( userInfo.given_name );
-      $('#last-name').val( userInfo.family_name );
-      $('#email').val( userInfo.email );
       $('.pre-apply').hide();
     } else {
       $('.pre-apply').show();
       $('.application').hide();
     }
   } else {
+    $('.application').hide();
     $('.pre-apply').show();
   }
 
