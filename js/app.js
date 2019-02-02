@@ -1,3 +1,7 @@
+Sentry.init({ dsn: 'https://9a2dd82a420e4115aca3cc605e6131f7@sentry.io/1385360' });
+
+
+
 var country = null;
 var state = null;
 var continent = null;
@@ -90,7 +94,6 @@ var getApplications = function() {
 }
 
 
-
 $(document).ready(function() {  
   var userInfo = Cookies.getJSON("com.neo4j.accounts.userInfo");
   var id_token = Cookies.get("com.neo4j.accounts.idToken");
@@ -152,8 +155,11 @@ $(document).ready(function() {
 
   $('#application-toggle-button').click( 
     function() {
+      $('.pre-apply').hide();
+      $('.post-apply').hide();
       $('.application').show();
       $('.application-toggle').hide();
+      Foundation.reInit('equalizer');
     }
   );
 
@@ -167,11 +173,12 @@ $(document).ready(function() {
     } 
   } else {
     $('.pre-apply').show();
+    Foundation.reInit('equalizer');
   }
 
   if (userInfo && id_token && !id_token_expired) {
     var qsmap = parseQueryString();
-
+    $('.pre-apply').hide();
     getApplications()
       .fail( function (jqXHR, textStatus, errorThrown) {
         alert("Failed retrieving existing apps. (" + jqXHR.statusText + "). Contact startups@neo4j.com if this persists.");
@@ -193,29 +200,36 @@ $(document).ready(function() {
             }
             newListItem.insertAfter('#existing-applications-list-header');
           });
-          $('.pre-apply').hide();
-          $('.existing-applications').show();
-          $('.application').hide();
-          $('.application-toggle').show();
+          if ('action' in qsmap && qsmap['action'][0] == 'continue') {
+            $('.existing-applications').show();
+            $('.application').hide();
+            $('.application-toggle').show();
+            Foundation.reInit('equalizer');
+          } else {
+            $('.pre-apply').show();
+            $('.application').hide();
+            Foundation.reInit('equalizer');
+          }
         } else if (data['applications'].length == 0) {
-          $('.pre-apply').hide();
-          $('.existing-applications').hide();
-          $('.application').show();
+          if ('action' in qsmap && qsmap['action'][0] == 'continue') {
+            $('.existing-applications').hide();
+            $('.application').show();
+            Foundation.reInit('equalizer');
+          } else {
+            $('.pre-apply').show();
+            $('.application').hide();
+            Foundation.reInit('equalizer');
+          }
         }
       }
     );
     $('#first-name').val( userInfo.given_name );
     $('#last-name').val( userInfo.family_name );
     $('#email').val( userInfo.email );
-    if ('action' in qsmap && qsmap['action'][0] == 'continue') {
-      $('.pre-apply').hide();
-    } else {
-      $('.pre-apply').show();
-      $('.application').hide();
-    }
   } else {
-    $('.application').hide();
     $('.pre-apply').show();
+    $('.application').hide();
+    Foundation.reInit('equalizer');
   }
 
 }); // end document.ready() handler

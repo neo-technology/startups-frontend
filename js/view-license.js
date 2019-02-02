@@ -1,3 +1,6 @@
+Sentry.init({ dsn: 'https://9a2dd82a420e4115aca3cc605e6131f7@sentry.io/1385360' });
+
+
 var API_BASE_URL = "{{API_BASE_URL}}"
 
 var getTimeDiff = function(time1, time2) {
@@ -28,8 +31,8 @@ var getLicense = function(feature, date) {
 }
 
 
-
 $(document).ready(function() {  
+  var start = Date.now();
   var userInfo = Cookies.getJSON("com.neo4j.accounts.userInfo");
   var id_token = Cookies.get("com.neo4j.accounts.idToken");
   var id_token_expired = true;
@@ -52,8 +55,14 @@ $(document).ready(function() {
         function (data) {
           license_text = data['license']['license_key'];
           license_instructions = data['license']['license_instructions'];
+          $('#license_description').html("License for " + data['license']['licensed_feature_name']);
           $('#license_instructions').html(license_instructions);
           $('#license_text').html('<pre>' + license_text + '</pre>');
+          sleepTime = 1500 - (Date.now() - start);
+          if (sleepTime < 0) {
+            sleepTime = 0;
+          }
+          setTimeout(function() { $('#pre-load').hide(); $('#post-load').show(); }, sleepTime);
         }
       );
     }
