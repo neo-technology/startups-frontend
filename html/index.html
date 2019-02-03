@@ -34,7 +34,7 @@
       <div class="row">
         <div class="columns">
           <h2>Startup Program</h2>
-          <p class="lead blue">The next generation of world-changing ideas will be powered by graphs - and we're here to give yours a boost through free and discounted access to the World's Leading Graph Database.</p>
+          <p class="lead blue">The next generation of world-changing ideas will be powered by graphs - and we're here to give yours a boost through free and discounted access to the World's Leading Graph Database.  Graphs drive innovation!</p>
         </div>
       </div>
     </section>
@@ -45,7 +45,7 @@
             <div class="column medium-6">
               <div class="startup-cta__box" data-equalizer-watch="">
                 <h2 class="subheader blue lg bold">Thanks!</h2>
-                <p>Thanks for submitting your application to the Neo4j Startup Program. We'll process your application within the next few days and respond via email.</p>
+                <p>Thanks for submitting your application to the Neo4j Startup Program. We'll process your application within the next few days and respond via email.  You can always return to this site to check the status of the application as well.</p>
                 <p><span id="application-id"></span></p>
               </div>
             </div>
@@ -71,6 +71,7 @@
                 <ul>
                   <li>50 or fewer employees</li>
                   <li>Less than $3MM USD annual revenue</li>
+                  <li>Willingness to share what you've built with the Neo4j community</li>
                 </ul>
               </div>
             </div>
@@ -80,8 +81,12 @@
                 <p>Startups in the program can build their applications on Neo4j Enterprise Edition, enabling mission-critical applications in a clustered environment.</p>
                 <h3 class="small">Included for Free:</h3>
                 <ul>
-                  <li>Neo4j Enterprise for 3 machines in production, 3 in test/staging and 6 in dev</li>
-                  <li>Each machine can have up to 256GB of RAM and 24 cores</li>
+                  <li><a href="https://neo4j.com/product/">Neo4j Enterprise</a> for 3 machines in production, 3 in test/staging and 6 in dev
+                    <ul>
+                      <li>Each machine can have up to 256GB of RAM and 24 cores</li>
+                    </ul>
+                  </li>
+                  <li><a href="https://neo4j.com/bloom/">Neo4j Bloom</a> for 10 machines, enabling end-users to explore graph data visually from different business perspectives.</li>
                 </ul>
               </div>
             </div>
@@ -104,8 +109,8 @@
           <div class="row" data-equalizer="" style="margin-top: 20px;">
             <div class="column medium-12">
               <div class="startup-cta__box" data-equalizer-watch="" style="padding-top: 20px; padding-bottom: 20px; text-align: center">
-                Need our Enterprise-class support, knowledge base and professional services teams?<br>
-                <a>Contact us</a> to learn about discounted rates on Neo4j Enterprise subscriptions.
+                Need our Enterprise-class support, knowledge base and access to our professional services teams?<br>
+                <a href="https://neo4j.com/contact-us/">Contact us</a> to learn about discounted rates on Neo4j Enterprise subscriptions.
               </div>
             </div>
           </div>
@@ -157,47 +162,6 @@
             <div class="row" style="margin-top: 30px;" data-equalizer="">
               <div class="column medium-6">
                 <div class="startup-cta__box" data-equalizer-watch="">
-                  <h2 class="subheader blue lg bold">About You</h2>
-                  <div class="row">
-                    <div class="small-12 columns">
-                      <div class="row">
-                        <div class="small-4 columns">
-                          <label for="first-name" class="right inline">First Name *</label>
-                        </div>
-                        <div class="small-8 columns">
-                          <input type="text" id="first-name" name="first-name" placeholder="">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="small-12 columns">
-                      <div class="row">
-                        <div class="small-4 columns">
-                          <label for="last-name" class="right inline">Last Name *</label>
-                        </div>
-                        <div class="small-8 columns">
-                          <input type="text" id="last-name" name="last-name" placeholder="">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="small-12 columns">
-                      <div class="row">
-                        <div class="small-4 columns">
-                          <label for="email" class="right inline">E-mail *</label>
-                        </div>
-                        <div class="small-8 columns">
-                          <input type="text" id="email" name="email" placeholder="" required="">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="column medium-6">
-                <div class="startup-cta__box" data-equalizer-watch="">
                   <h2 class="subheader blue lg bold">About Your Company</h2>
                   <div class="row">
                     <div class="small-12 columns">
@@ -219,6 +183,30 @@
                         </div>
                         <div class="small-8 columns">
                           <input type="text" id="company-hq" name="company-hq" placeholder="(City, Province, Country)" required="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="company-url" class="right inline">Website</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <input type="text" id="company-url" name="company-url" placeholder="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="company-industry" class="right inline">Industry *</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <input type="text" id="company-industry" name="company-industry" placeholder="" required="">
                         </div>
                       </div>
                     </div>
@@ -261,10 +249,23 @@
                     <div class="small-12 columns">
                       <div class="row">
                         <div class="small-4 columns">
-                          <label for="company-url" class="right inline">Website</label>
+                          <label for="company-revenue" class="right inline">Annual<br />Revenue *</label>
                         </div>
                         <div class="small-8 columns">
-                          <input type="text" id="company-url" name="company-url" placeholder="">
+                          <select id="company-revenue" name="company-revenue" required="">
+                            <option value="" disabled selected>
+                              (Select)
+                            </option>
+                            <option value="0.1">
+                              Less than $1MM
+                            </option>
+                            <option value="1.199">
+                              $1MM to $1.99M
+                            </option>
+                            <option value="2.299">
+                              $2.0MM to $2.99M
+                            </option>
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -273,10 +274,94 @@
                     <div class="small-12 columns">
                       <div class="row">
                         <div class="small-4 columns">
-                          <label for="company-industry" class="right inline">Industry *</label>
+                          <label for="company-funding-stage" class="right inline">Funding<br />Stage*</label>
                         </div>
                         <div class="small-8 columns">
-                          <input type="text" id="company-industry" name="company-industry" placeholder="" required="">
+                          <select id="company-funding-stage" name="company-funding-stage" required="">
+                            <option value="" disabled selected>
+                              (Select)
+                            </option>
+                            <option value="self-funded">
+                              Self-funded
+                            </option>
+                            <option value="seed">
+                              Seed funding
+                            </option>
+                            <option value="series-A">
+                              Series A
+                            </option>
+                            <option value="series-B">
+                              Series B
+                            </option>
+                            <option value="series-C-plus">
+                              Series C+
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="column medium-6">
+                <div class="startup-cta__box" data-equalizer-watch="">
+                  <h2 class="subheader blue lg bold">About You</h2>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="first-name" class="right inline">First Name *</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <input type="text" id="first-name" name="first-name" placeholder="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="last-name" class="right inline">Last Name *</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <input type="text" id="last-name" name="last-name" placeholder="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="email" class="right inline">E-mail *</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <input type="text" id="email" name="email" placeholder="" required="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="applicant-role" class="right inline">Title or Role*</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <input type="text" id="applicant-role" name="applicant-role" placeholder="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="applicant-location" class="right inline">Your Location *</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <input type="text" id="applicant-location" name="applicant-location" placeholder="(City, Province, Country)" required="">
                         </div>
                       </div>
                     </div>
@@ -334,6 +419,40 @@
                             </div>
                             <div class="small-8 columns">
                               <textarea id="neo4j-suggestions" name="neo4j-suggestions" placeholder="(Write a short snippet)"></textarea>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="small-12 columns">
+                          <div class="row">
+                            <div class="small-4 columns">
+                              <label for="company-deploy-software" class="right inline">How does your company typically deploy software? *</label>
+                            </div>
+                            <div class="small-8 columns">
+                              <select id="company-deploy-software" name="company-deploy-software" required="">
+                                <option value="" disabled selected>
+                                  (Select)
+                                </option>
+                                <option value="cloud-aws">
+                                  Cloud: AWS
+                                </option>
+                                <option value="cloud-azure">
+                                  Cloud: Azure
+                                </option>
+                                <option value="cloud-gcp">
+                                  Cloud: GCP
+                                </option>
+                                <option value="on-premise">
+                                  On premise
+                                </option>
+                                <option value="co-located">
+                                  Co-located dedicated server
+                                </option>
+                                <option value="other">
+                                  Other
+                                </option>
+                              </select>
                             </div>
                           </div>
                         </div>

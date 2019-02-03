@@ -115,7 +115,11 @@ $(document).ready(function() {
     },
     submitHandler: function(form) {
       /* TODO move into success and failure cases */
-      postApplication().done(
+      postApplication()
+      .fail( function (jqXHR, textStatus, errorThrown) {
+        alert("Failed submitting application. (" + jqXHR.statusText + "). Contact startups@neo4j.com if this problem persists.");
+      })
+      .done(
         function(data) {
           $('.pre-apply').hide();
           $('.application').hide();
