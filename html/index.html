@@ -45,8 +45,9 @@
             <div class="column medium-6">
               <div class="startup-cta__box" data-equalizer-watch="">
                 <h2 class="subheader blue lg bold">Thanks!</h2>
-                <p>Thanks for submitting your application to the Neo4j Startup Program. We'll process your application within the next few days and respond via email.  You can always return to this site to check the status of the application as well.</p>
+                <p>Thanks for submitting your application to the Neo4j Startup Program. We'll process your application within the next few days and respond via email.  You can always <a href="https://neo4j.com/startup-program-v2/">return to this site</a> to check the status of the application as well.</p>
                 <p><span id="application-id"></span></p>
+                <p><a role="button" class="button medium blue" style="margin-bottom: 0px" id="load-startup-home-button">Refresh for App Status</a></p>
               </div>
             </div>
             <div class="column medium-6">
@@ -59,13 +60,24 @@
         </div>
       </div>
     </section>
+    <section id="" class="bg-dkgrey lg utility-collapse-top startup-cta flexible-content-section-1 loading-icon" style="display: none;">
+      <div class="row">
+        <div class="columns">
+          <div class="row" data-equalizer="">
+            <div class="column medium-12">
+              <center><img src="https://s3.amazonaws.com/neo4j-startup-program/neo4j_globe_animated_white.gif"></center>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <section id="" class="bg-dkgrey lg utility-collapse-top startup-cta flexible-content-section-1 pre-apply" style="display: none;">
       <div class="row">
         <div class="columns">
           <div class="row" data-equalizer="">
             <div class="column medium-6">
               <div class="startup-cta__box" data-equalizer-watch="">
-                <h2 class="subheader blue lg bold">Who's eligible?</h2>
+                <h2 class="subheader green lg bold">Who's eligible?</h2>
                 <p>Whether you're just getting started or you have a couple million in revenue, Neo4j wants to help power both customer-facing and internal applications with graphs!</p>
                 <h3 class="small">Requirements:</h3>
                 <ul>
@@ -98,7 +110,10 @@
           <div class="row" data-equalizer="" style="margin-top: 20px;">
             <div class="column medium-12">
               <div class="startup-cta__box" data-equalizer-watch="" style="padding-top: 20px; padding-bottom: 20px;">
-                <p style="text-align: center; margin-bottom: 0px;"><a role="button" class="button medium blue" style="margin-bottom: 0px" id="application-signin">Login or Create Account to Sign Up</a></p>
+                <h2 class="subheader green lg bold" style="text-align: center;">Join the Startup Program Now</h2>
+                <p style="text-align: center; margin-bottom: 0px;">
+                  <a role="button" class="button medium blue" style="margin-bottom: 0px" id="application-signin">Login or Create Account to Sign Up</a>
+                </p>
               </div>
             </div>
           </div>
@@ -117,7 +132,7 @@
         </div>
       </div>
     </section>
-    <section id="" class="bg-dkgrey lg utility-collapse-top startup-cta flexible-content-section-1 existing-applications" style="display: none;">
+    <section id="" class="bg-dkgrey lg utility-collapse-top startup-cta flexible-content-section-1 existing-applications" style="display: none; padding-bottom: 30px;">
       <div class="row">
         <div class="columns">
            <div class="row" data-equalizer="">
@@ -143,7 +158,40 @@
                 </div>
               </div>
             </div>
-            <div class="row application-toggle" style="margin-top: 30px;" data-equalizer="">
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="" class="bg-dkgrey lg utility-collapse-top startup-cta flexible-content-section-1 available-downloads" style="display: none; padding-bottom: 30px;">
+      <div class="row">
+        <div class="columns">
+           <div class="row" data-equalizer="">
+              <div class="column medium-12">
+                <div class="startup-cta__box" data-equalizer-watch="" id="available-downloads-list">
+                  <h2 class="subheader blue lg bold">Available Downloads</h2>
+                  <div class="row" id="available-downloads-list-header">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-3 columns release-date"><div style="width: 140px; text-align: right"><b>Date</b></div></div>
+                        <div class="small-3 columns release-product"><b>Product</b></div>
+                        <div class="small-2 columns release-version"><b>Version</b></div>
+                        <div class="small-4 columns download-link"><b>Download Links</b></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="" class="bg-dkgrey lg utility-collapse-top startup-cta flexible-content-section-1 application-toggle" style="display: none;">
+      <div class="row">
+        <div class="columns">
+           <div class="row" data-equalizer="">
+              <div class="column medium-12">
+                  <div class="row application-toggle" style="margin-top: 30px;" data-equalizer="">
               <div class="column medium-6">
                 <button id="application-toggle-button">Submit new application</button>
               </div>
@@ -183,6 +231,28 @@
                         </div>
                         <div class="small-8 columns">
                           <input type="text" id="company-hq" name="company-hq" placeholder="(City, Province, Country)" required="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="small-12 columns">
+                      <div class="row">
+                        <div class="small-4 columns">
+                          <label for="company-region" class="right inline">HQ Region *</label>
+                        </div>
+                        <div class="small-8 columns">
+                          <select id="company-region" name="company-region" required="" onchange="regionChange()">
+                            <option value="" disabled selected>
+                              (Select)
+                            </option>
+                            <option value="europe">
+                              Europe
+                            </option>
+                            <option value="restofworld">
+                              Outside Europe
+                            </option>
+                          </select>
                         </div>
                       </div>
                     </div>

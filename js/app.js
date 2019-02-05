@@ -24,9 +24,11 @@ var geoOnSuccess = function(geoipResponse) {
   }
   continent = geoipResponse.continent.code;
   if (continent == 'EU') {
+    $('#company-region').val('europe');
     $('#license-url').val(neo4j_ab_license_url);
     $('#license-url-link').attr('href', neo4j_ab_license_url);
   } else {
+    $('#company-region').val('restofworld');
     $('#license-url').val(neo4j_inc_license_url);
     $('#license-url-link').attr('href', neo4j_inc_license_url);
   }
@@ -36,9 +38,23 @@ var geoOnError = function(error) {
   console.log(error);
 }
 
-// Call geolocation early
-geoip2.city( geoOnSuccess, geoOnError );
+try {
+  // Call geolocation early
+  geoip2.city( geoOnSuccess, geoOnError );
+} catch (err) {
+  geoOnError(err);
+}
 
+var regionChange = function() {
+  region = $('#company-region').val();
+  if (region == 'europe') {
+    $('#license-url').val(neo4j_ab_license_url);
+    $('#license-url-link').attr('href', neo4j_ab_license_url);
+  } else {
+    $('#license-url').val(neo4j_inc_license_url);
+    $('#license-url-link').attr('href', neo4j_inc_license_url);
+  }
+}
 
 var getTimeDiff = function(time1, time2) {
   var hourDiff = time2 - time1;
@@ -93,12 +109,39 @@ var getApplications = function() {
   });
 }
 
+/**
+ * Get Neo4j versions to display in download 
+ */
+var getDownloads = function() {
+  return $.ajax
+  ({
+    type: "GET",
+    url: "/current-neo4j-versions/"
+  });
+}
+
+
+var qsmap = parseQueryString();
+var userInfo = Cookies.getJSON("com.neo4j.accounts.userInfo");
+var id_token = Cookies.get("com.neo4j.accounts.idToken");
+var id_token_expired = true;
+
+var expiresIn = null;
+if (id_token) {
+  expiresIn = getTimeDiff(Date.now(), (jwt_decode(id_token).exp) * 1000); 
+  if ( (expiresIn.days > 0) || (expiresIn.hours > 0) || (expiresIn.mins > 0)) {
+    id_token_expired = false;
+  }  else {
+    id_token_expired = true;
+  } 
+}
+
+if (!userInfo || !id_token || id_token_expired) {
+  $('.pre-apply').show();
+}
 
 $(document).ready(function() {  
-  var userInfo = Cookies.getJSON("com.neo4j.accounts.userInfo");
-  var id_token = Cookies.get("com.neo4j.accounts.idToken");
-  var id_token_expired = true;
-
+  Foundation.reInit('equalizer');
 
   $.validator.methods.agree = function( value, element ) {
     return this.optional( element ) || /^AGREE$/.test( value );
@@ -125,7 +168,14 @@ $(document).ready(function() {
           $('.application').hide();
           $('#application-id').text( "Application ID: " + data['application-id'] );
           document.body.scrollTop = document.documentElement.scrollTop = 0;
+          $('#load-startup-home-button').click(
+            function() {
+              window.location.reload(true);
+              return false;
+            }
+          )
           $('.post-apply').show();
+          $('.available-downloads').hide(); 
           $('.existing-applications').hide();
         }
       ); 
@@ -167,28 +217,17 @@ $(document).ready(function() {
     }
   );
 
-  var expiresIn = null;
-  if (id_token) {
-    expiresIn = getTimeDiff(Date.now(), (jwt_decode(id_token).exp) * 1000); 
-    if ( (expiresIn.days > 0) || (expiresIn.hours > 0) || (expiresIn.mins > 0)) {
-      id_token_expired = false;
-    }  else {
-      id_token_expired = true;
-    } 
-  } else {
-    $('.pre-apply').show();
-    Foundation.reInit('equalizer');
-  }
 
   if (userInfo && id_token && !id_token_expired) {
-    var qsmap = parseQueryString();
     $('.pre-apply').hide();
+    $('.loading-icon').show();
     getApplications()
       .fail( function (jqXHR, textStatus, errorThrown) {
         alert("Failed retrieving existing apps. (" + jqXHR.statusText + "). Contact startups@neo4j.com if this persists.");
       })
       .done( function (data) {
         if (data['applications'].length > 0) {
+          var approvedApps = 0;
           data['applications'].forEach(function (app) {
             //var d = new Date(app['created_timestamp']);
             var newListItem = $('#existing-applications-list-header').clone();  
@@ -200,18 +239,43 @@ $(document).ready(function() {
             newListItem.find('.license-expires').text(truncateDateTime(app['expires_date']));
             for (keyid in app['license_keys']) {
               key = app['license_keys'][keyid];
-              newListItem.find('.app-licenses').append('<a target="_blank" href="view-license?date=' + key['license_date'] + '&feature=' + key['licensed_feature'] + '">' + key['licensed_feature'] + '</a> ');
+              newListItem.find('.app-licenses').append('<a target="_blank" href="view-license?date=' + key['license_date'] + '&feature=' + key['licensed_feature'] + '">' + key['licensed_feature'].replace('neo4j-', '') + '</a> &nbsp;');
             }
             newListItem.insertAfter('#existing-applications-list-header');
+            if (app['status'] == 'APPROVED') {
+              approvedApps = approvedApps + 1;
+            }
           });
           if ('action' in qsmap && qsmap['action'][0] == 'continue') {
             $('.existing-applications').show();
             $('.application').hide();
             $('.application-toggle').show();
+            $('.loading-icon').hide();
+            if (approvedApps > 0) {
+              getDownloads()
+                .done( function (data) {
+                  var jsonData = JSON.parse(data);
+                  var rowId = 0;
+                  var insertAfter = 'available-downloads-list-header';
+                  jsonData.forEach(function (download) {
+                    var newListItem = $('#available-downloads-list-header').clone();
+                    newListItem.attr('id', 'available-downloads-list-row' + rowId);
+                    newListItem.find('.release-product').text('Enterprise Server');
+                    newListItem.find('.release-date').html('<div style="width: 140px; text-align: right">' + download['release_date'] + '</div>');
+                    newListItem.find('.release-version').text(download['neo4j_version']);
+                    newListItem.find('.download-link').html('<a target="_blank" href="https://neo4j.com/download-thanks/?edition=enterprise&flavour=unix&release=' + download['neo4j_version'] + '">UNIX/Linux</a>&nbsp;&nbsp; <a target="_blank" href="https://neo4j.com/download-thanks/?edition=enterprise&flavour=windows&release=' + download['neo4j_version'] + '">Windows</a>');
+                    newListItem.insertAfter('#' + insertAfter);
+                    insertAfter = 'available-downloads-list-row' + rowId;
+                    rowId = rowId + 1;
+                  });
+                  $('.available-downloads').show(); 
+                } );
+            }
             Foundation.reInit('equalizer');
           } else {
             $('.pre-apply').show();
             $('.application').hide();
+            $('.loading-icon').hide();
             Foundation.reInit('equalizer');
           }
         } else if (data['applications'].length == 0) {
