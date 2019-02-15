@@ -27,10 +27,12 @@ var geoOnSuccess = function(geoipResponse) {
     $('#company-region').val('europe');
     $('#license-url').val(neo4j_ab_license_url);
     $('#license-url-link').attr('href', neo4j_ab_license_url);
+    $('#license-url-link').text('Terms of the Startup Program (Europe)');
   } else {
     $('#company-region').val('restofworld');
     $('#license-url').val(neo4j_inc_license_url);
     $('#license-url-link').attr('href', neo4j_inc_license_url);
+    $('#license-url-link').text('Terms of the Startup Program');
   }
 }
 
@@ -50,9 +52,11 @@ var regionChange = function() {
   if (region == 'europe') {
     $('#license-url').val(neo4j_ab_license_url);
     $('#license-url-link').attr('href', neo4j_ab_license_url);
+    $('#license-url-link').text('Terms of the Startup Program (Europe)');
   } else {
     $('#license-url').val(neo4j_inc_license_url);
     $('#license-url-link').attr('href', neo4j_inc_license_url);
+    $('#license-url-link').text('Terms of the Startup Program');
   }
 }
 
@@ -282,9 +286,11 @@ $(document).ready(function() {
           if ('action' in qsmap && qsmap['action'][0] == 'continue') {
             $('.existing-applications').hide();
             $('.application').show();
+            $('.loading-icon').hide();
             Foundation.reInit('equalizer');
           } else {
             $('.pre-apply').show();
+            $('.loading-icon').hide();
             $('.application').hide();
             Foundation.reInit('equalizer');
           }
@@ -297,6 +303,7 @@ $(document).ready(function() {
   } else {
     $('.pre-apply').show();
     $('.application').hide();
+    $('.loading-icon').hide();
     Foundation.reInit('equalizer');
   }
 
