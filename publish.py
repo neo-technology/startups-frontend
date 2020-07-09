@@ -29,8 +29,10 @@ def publish_app_js(stage):
 
   with fapp.app_context():
     tmpl_vars = {'API_BASE_URL': API_BASE_URL[stage]}
-    rendered_content = render_template('js/app.js', **tmpl_vars)
-  f = s3.put_object(Body=bytes(rendered_content, encoding='utf-8'), Bucket='cdn.neo4jlabs.com', Key='startups-v2/' + stage + '/app.js', ACL='public-read')
+    rendered_content = render_template('dist/app.js', **tmpl_vars)
+    rendered_content = rendered_content.encode('ascii', 'ignore')
+    
+  f = s3.put_object(Body=bytes(rendered_content), Bucket='cdn.neo4jlabs.com',ContentType='text/html', Key='startups-v2/' + stage + '/app.js', ACL='public-read')
   return f['VersionId']
 
 def get_latest_license(key):
@@ -54,8 +56,10 @@ def publish_view_license_js(stage):
   s3 = boto3.client('s3')
   with fapp.app_context():
     tmpl_vars = {'API_BASE_URL': API_BASE_URL[stage]}
-    rendered_content = render_template('js/view-license.js', **tmpl_vars)
-  f = s3.put_object(Body=bytes(rendered_content, encoding='utf-8'), Bucket='cdn.neo4jlabs.com', Key='startups-v2/' + stage + '/view-license.js', ACL='public-read')
+    rendered_content = render_template('dist/license.js', **tmpl_vars)
+    rendered_content = rendered_content.encode('ascii', 'ignore')
+
+  f = s3.put_object(Body=bytes(rendered_content), Bucket='cdn.neo4jlabs.com', Key='startups-v2/' + stage + '/view-license.js', ACL='public-read')
   return f['VersionId']
 
 
