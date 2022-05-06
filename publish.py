@@ -10,7 +10,7 @@ from flask import render_template
 fapp = flask.Flask('pub', template_folder='.')
 
 API_BASE_URL = {"dev": "https://q6kkptbenj.execute-api.us-east-1.amazonaws.com/dev/",
-                "prod": "https://qjbuk9bvp6.execute-api.us-east-1.amazonaws.com/prod/"}
+                "prod": "https://w3qym6pdvb.execute-api.us-east-1.amazonaws.com/"}
 
 LANDING_PAGE = {"dev": 91469,
                 "prod": 87812}
