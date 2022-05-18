@@ -11,8 +11,9 @@ const auth = new WebAuth({
 	scope: 'read:account-info openid email profile user_metadata',
 	responseType: 'token id_token'
 })
-
+if (window.Sentry ) {
 Sentry.init({ dsn: 'https://9a2dd82a420e4115aca3cc605e6131f7@sentry.io/1385360' });
+}
 
 const truncateDateTime = function (dateTimeStr) {
 	if (typeof dateTimeStr == 'string') {
