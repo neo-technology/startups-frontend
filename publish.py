@@ -89,7 +89,7 @@ def update_wordpress_page(pageId, content):
     headers['Content-Type'] = 'application/json'
     print(url)
     pr = requests.post(url, headers=headers, data=json.dumps(response))
-
+    print(pr.content)
     return pr.content
 
 
