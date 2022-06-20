@@ -12,6 +12,49 @@
     color: red;
     padding-bottom: 20px;
   }
+
+  @keyframes ndl-spinner {
+    0% {
+      transform: translate3d(0%, 0%, 0) rotate(0deg);
+    }
+    100% {
+      transform: translate3d(0%, 0%, 0) rotate(360deg);
+    }
+  }
+
+  .ndl-spin-wrapper.large {
+      height: 30px;
+      width: 30px;
+      margin: auto;
+  }
+
+  .ndl-spin-wrapper .spin {
+      position: absolute;
+  }
+
+  .ndl-spin-wrapper.large .spin::before {
+      height: 30px;
+      width: 30px;
+      border-width: 4px;
+  }
+
+  .ndl-spin-wrapper .spin::before {
+      -webkit-animation: 1.5s linear infinite ndl-spinner;
+      animation: 1.5s linear infinite ndl-spinner;
+      -webkit-animation-play-state: inherit;
+      animation-play-state: inherit;
+      border-radius: 50%;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(0%, 0%, 0);
+      will-change: transform;
+      border-style: solid;
+      border-color: rgb(230 233 238 / var(--tw-border-opacity));
+      --tw-border-opacity: 1;
+      border-bottom-color: rgb(1 139 255 / var(--tw-border-opacity));
+  }
 </style>
 
 <script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js" crossorigin="anonymous"></script>
@@ -80,7 +123,7 @@
         <div class="columns">
           <div class="row" data-equalizer="">
             <div class="column medium-12">
-              <center><img src="https://s3.amazonaws.com/neo4j-startup-program/neo4j_globe_animated_white.gif"></center>
+              <div class="ndl-spin-wrapper large" role="status" aria-label="loading-spinner"><div class="spin"></div></div>
             </div>
           </div>
         </div>
