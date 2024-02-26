@@ -7,7 +7,7 @@ on:
       - master
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 16.x
 
 jobs:
   set_environment:
@@ -55,7 +55,7 @@ jobs:
       - name: Install Python requirements
         run: pip install -r requirements.txt
 
-      - name: Deploy Serverless Lambda functions
+      - name: Build and publish
         env:
           PUBLISH_DOCS_USERNAME: ${{ vars.PUBLISH_DOCS_USERNAME }}
           PUBLISH_DOCS_PASSWORD: ${{ vars.PUBLISH_DOCS_PASSWORD }}
