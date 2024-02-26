@@ -9,13 +9,13 @@ from flask import render_template
 
 fapp = flask.Flask('pub', template_folder='.')
 
-API_BASE_URL = {"dev": "https://q6kkptbenj.execute-api.us-east-1.amazonaws.com/dev/",
+API_BASE_URL = {"develop": "https://q6kkptbenj.execute-api.us-east-1.amazonaws.com/dev/",
                 "prod": "https://w3qym6pdvb.execute-api.us-east-1.amazonaws.com/"}
 
-LANDING_PAGE = {"dev": 91469,
+LANDING_PAGE = {"develop": 91469,
                 "prod": 87812}
 
-LICENSE_PAGE = {"dev": 91471,
+LICENSE_PAGE = {"develop": 91471,
                 "prod": 91164}
 
 '''
@@ -94,7 +94,7 @@ def update_wordpress_page(pageId, content):
 
 
 def main(argv):
-  stage = 'dev'
+  stage = 'develop'
   try:
      opts, args = getopt.getopt(argv,"h",['stage='])
   except getopt.GetoptError:
@@ -108,8 +108,8 @@ def main(argv):
         stage = arg
   print('Stage is "%s"' % (stage))
 
-  if stage != 'dev' and stage != 'prod':
-    print("Stages 'prod' + 'dev' are only supported stages currently")
+  if stage != 'develop' and stage != 'prod':
+    print("Stages 'prod' + 'develop' are only supported stages currently")
     sys.exit()
 
   if 'PUBLISH_DOCS_USERNAME' in os.environ and 'PUBLISH_DOCS_PASSWORD' in os.environ:
@@ -127,8 +127,9 @@ def main(argv):
       rendered_content = render_template('html/view-license.html', **tmpl_vars)
       pageContent = update_wordpress_page(LICENSE_PAGE[stage], rendered_content)
   else:
-    print("Environment varisbles for PUBLISH_DOCS_USERNAME and PUBLISH_DOCS_PASSWORD must be set")
+    print("Environment variables for PUBLISH_DOCS_USERNAME and PUBLISH_DOCS_PASSWORD must be set")
     sys.exit()
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])
