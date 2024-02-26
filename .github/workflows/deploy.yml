@@ -3,6 +3,7 @@ name: Publish frontend
 on:
   push:
     branches:
+      - develop
       - master
 
 env:
@@ -39,4 +40,6 @@ jobs:
         env:
           PUBLISH_DOCS_USERNAME: ${{ vars.PUBLISH_DOCS_USERNAME }}
           PUBLISH_DOCS_PASSWORD: ${{ vars.PUBLISH_DOCS_PASSWORD }}
-        run: npm run publish-prod
+        run: |
+          SIMPLE_REF=$(echo ${GITHUB_REF#refs/heads/} | tr / -)
+          npm run publish-${SIMPLE_REF}
