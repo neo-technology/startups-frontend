@@ -39,7 +39,7 @@ jobs:
       - name: Build and publish
         env:
           PUBLISH_DOCS_USERNAME: ${{ vars.PUBLISH_DOCS_USERNAME }}
-          PUBLISH_DOCS_PASSWORD: ${{ vars.PUBLISH_DOCS_PASSWORD }}
+          PUBLISH_DOCS_PASSWORD: ${{ secrets.PUBLISH_DOCS_PASSWORD }}
         run: |
           SIMPLE_REF=$(echo ${GITHUB_REF#refs/heads/} | tr / -)
           npm run publish-${SIMPLE_REF}
