@@ -40,29 +40,6 @@ window._neo4jStartup.regionChange = function () {
 }
 
 /**
- * Post application in current form (id: startup-application)
- */
-const postApplication = function (token) {
-	/* Serialize data into JSON */
-	const jsonData = $('#startup-application').serializeArray()
-		.reduce(function (a, x) { a[x.name] = x.value; return a; }, {});
-
-	/* Return ajax for callback chaining */
-	return $.ajax
-		({
-			type: "POST",
-			url: API_BASE_URL + "apply",
-			contentType: "application/json",
-			dataType: 'json',
-			async: true,
-			data: JSON.stringify(jsonData),
-			headers: {
-				"Authorization": token
-			}
-		});
-}
-
-/**
  * Get applications previously submitted by current user
  */
 const getApplications = function (token) {
@@ -97,49 +74,6 @@ $(document).ready(function () {
 		return this.optional(element) || /^AGREE$/.test(value);
 	}
 
-
-	/* Register validation handler */
-	$("#startup-application").validate({
-		rules: {
-			"terms-agree": "agree"
-		},
-		messages: {
-			"terms-agree": "You must type AGREE in this field to agree to terms"
-		},
-		submitHandler: function (form) {
-			/* TODO move into success and failure cases */
-			postApplication(window._neo4jStartup.accessToken)
-				.fail(function (jqXHR, textStatus, errorThrown) {
-					alert("Failed submitting application. (" + jqXHR.statusText + "). Contact startups@neo4j.com if this problem persists.");
-				})
-				.done(
-					function (data) {
-						$('.pre-apply').hide();
-						$('.application').hide();
-						$('#application-id').text("Application ID: " + data['application-id']);
-						document.body.scrollTop = document.documentElement.scrollTop = 0;
-						$('#load-startup-home-button').click(
-							function () {
-								window.location.reload(true);
-								return false;
-							}
-						)
-						$('.post-apply').show();
-						$('.available-downloads').hide();
-						$('.existing-applications').hide();
-					}
-				);
-		}
-	});
-
-	/* Register button to submit form */
-	$('#startup-application-button').click(
-		function () {
-			$("#startup-application").submit();
-			return false;
-		}
-	);
-
 	/* Register button to sign in*/
 	$('#application-signin').click(
 		function () {
@@ -158,21 +92,10 @@ $(document).ready(function () {
 		}
 	);
 
-	$('#application-toggle-button').click(
-		function () {
-			$('.pre-apply').hide();
-			$('.post-apply').hide();
-			$('.application').show();
-			$('.application-toggle').hide();
-			Foundation.reInit('equalizer');
-		}
-	);
-
 	auth.checkSession({}, (err, result) => {
 		try {
 			if (err) {
 				$('.pre-apply').show();
-				$('.application').hide();
 				$('.loading-icon').hide();
 				Foundation.reInit('equalizer');
 				return;
@@ -211,8 +134,6 @@ $(document).ready(function () {
 						});
 						if (token) {
 							$('.existing-applications').show();
-							$('.application').hide();
-							$('.application-toggle').show();
 							$('.loading-icon').hide();
 							if (approvedApps > 0) {
 								getDownloads()
@@ -237,20 +158,17 @@ $(document).ready(function () {
 							Foundation.reInit('equalizer');
 						} else {
 							$('.pre-apply').show();
-							$('.application').hide();
 							$('.loading-icon').hide();
 							Foundation.reInit('equalizer');
 						}
 					} else if (data['applications'].length == 0) {
 						if (token) {
 							$('.existing-applications').hide();
-							$('.application').show();
 							$('.loading-icon').hide();
 							Foundation.reInit('equalizer');
 						} else {
 							$('.pre-apply').show();
 							$('.loading-icon').hide();
-							$('.application').hide();
 							Foundation.reInit('equalizer');
 						}
 					}
