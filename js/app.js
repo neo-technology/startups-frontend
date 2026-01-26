@@ -134,6 +134,7 @@ $(document).ready(function () {
 						});
 						if (token) {
 							$('.existing-applications').show();
+							$('.application-toggle').show();
 							$('.loading-icon').hide();
 							if (approvedApps > 0) {
 								getDownloads()
